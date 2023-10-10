@@ -30,22 +30,21 @@ export const getCodeBlock = (text: string): string | null =>
 export const getTypos = async (code: string): Promise<CodespellTypo[]>  => {
     const DESC = `
         You are an expert at software engineering,
-        you are responsible for reviewing my code and ensuring my code is following the best practices and maintainable, stable, and reusable.
-        Please help me review the following code block, return a JSON array with the modifications for me to match and replace,
-        You don't need to return other content except the JSON array, don't modify if it is not necessary, make the desc precise and content necessary info.
-        and simply description for the chances as the following JSON format,
+        review my code below and ensure it is following the best practices, and more maintainable.
+        return a JSON array for me to match and replace,
+        only return a JSON array as below, don't modify code unless it is necessary, keep info short and precise.
         Add \`\`\` at the start and end of json:
             [
                 {
-                    // The token of the place that need to change.
+                    // The code that need change. Don't change code here even spaces, as this value will be used to match the original text
                     token: string;
-                    // Suggestions for fixing&refactoring existing token. At least 1 suggestion at most 5 suggestions.
+                    // Suggestions for fixing&refactoring existing code. At most 3 suggestions. If the suggestion is to delete, use empty string ''
                     suggestions: string[];
-                    // Description info.
+                    // Short description
                     info: string;
                 }
             ]
-        Here is my code:
+        Code:
     `;
     const promptResult = await prompt(`
         ${DESC}\n
@@ -54,11 +53,16 @@ export const getTypos = async (code: string): Promise<CodespellTypo[]>  => {
         \`\`\`
     `);
 
+    console.log('promptResult', promptResult);
+
     const codeBlock = getCodeBlock(promptResult);
+
+    console.log('promptResult1', codeBlock);
 
     if (codeBlock) {
     return JSON.parse(codeBlock);
     }
+
     // @ts-ignore
     return [];
 };
