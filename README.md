@@ -1,6 +1,6 @@
 ## Code Smell GPT: Your Smart Code Reviewer and Refactorer
 
-<img src="https://github.com/clean99/vscode-code-smell-gpt/blob/main/images/code-smell-gpt-logo.png" alt="logo" width="200" height="200" />
+<img src="https://github.com/clean99/vscode-code-smell-gpt/raw/HEAD/images/code-smell-gpt-logo.png" alt="logo" width="200" height="200" />
 
 🚀 Elevate your coding experience with automated, AI-driven code reviews and refactor suggestions directly in your VSCode!
 
@@ -21,16 +21,16 @@ EN: [Youtube: CodeSmellGPT: Super Simpe Auto Code Review VSCode Extension!](http
 
 CN: [哔哩哔哩: CodeSmellGPT: 一个让GPT4看着你写代码的VSCode插件！（安装超级简单）](https://www.bilibili.com/video/BV1TH4y1R71R/)
 
-<img src="https://github.com/clean99/vscode-code-smell-gpt/blob/main/images/Usage1.png" alt="Usage1" />
+<img src="https://github.com/clean99/vscode-code-smell-gpt/raw/HEAD/images/Usage1.png" alt="Usage1" />
 
-<img src="https://github.com/clean99/vscode-code-smell-gpt/blob/main/images/Usage2.png" alt="Usage2" />
+<img src="https://github.com/clean99/vscode-code-smell-gpt/raw/HEAD/images/Usage2.png" alt="Usage2" />
 
-<img src="https://github.com/clean99/vscode-code-smell-gpt/blob/main/images/Usage3.png" alt="Usage3" />
+<img src="https://github.com/clean99/vscode-code-smell-gpt/raw/HEAD/images/Usage3.png" alt="Usage3" />
 
 ### How to Install and Setup
 
 1. **Install the Extension**: Search for "Code Smell GPT" in the VSCode marketplace and click on the install button.
-<img src="https://github.com/clean99/vscode-code-smell-gpt/blob/main/images/Install1.png" alt="install1" />
+<img src="https://github.com/clean99/vscode-code-smell-gpt/raw/HEAD/images/Install1.png" alt="install1" />
 2. **Setting Up GPT Key**:
     - After installation, you'll need to configure your GPT API key.
     - Open the command palette with Ctrl + Shift + P (Cmd + Shift + P on macOS).
@@ -43,9 +43,9 @@ CN: [哔哩哔哩: CodeSmellGPT: 一个让GPT4看着你写代码的VSCode插件�
     ```
     - Save the settings(You may need to hit 'save' multiple times or reopen VSCode so that the icon at right-bottom corner is became ready), and you're ready to code smarter with "Code Smell GPT"!
 
-<img src="https://github.com/clean99/vscode-code-smell-gpt/blob/main/images/Install2.png" alt="install2" />
+<img src="https://github.com/clean99/vscode-code-smell-gpt/raw/HEAD/images/Install2.png" alt="install2" />
 
-<img src="https://github.com/clean99/vscode-code-smell-gpt/blob/main/images/Install3.png" alt="install3" />
+<img src="https://github.com/clean99/vscode-code-smell-gpt/raw/HEAD/images/Install3.png" alt="install3" />
 
 ### How to Contribute
 
