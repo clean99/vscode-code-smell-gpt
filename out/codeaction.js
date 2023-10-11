@@ -1,36 +1,36 @@
 "use strict";
 /**
- * Defines `CodespellCodeAction` class.
+ * Defines `CodesmellCodeAction` class.
  *
- * `CodespellTypo` makes `CodespellDiagnostic` makes `CodespellCodeAction`.
+ * `CodesmellTypo` makes `CodesmellDiagnostic` makes `CodesmellCodeAction`.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CodespellCodeAction = void 0;
+exports.CodesmellCodeAction = void 0;
 const vscode = require("vscode");
 const diagnostics_1 = require("./diagnostics");
 /**
- * Provides code actions for the commands of `vscode-codespell.fixTypo` and
- * `vscode-codespell.fixAllTypos`.
+ * Provides code actions for the commands of `vscode-code-smell-gpt.fixTypo` and
+ * `vscode-code-smell-gpt.fixAllTypos`.
  */
-class CodespellCodeAction {
+class CodesmellCodeAction {
     provideCodeActions(document, _range, context, _token) {
         let actions = [];
         const ignores = [];
-        const codespellDiagnostics = context.diagnostics.filter((diagnostic) => diagnostic.code === diagnostics_1.CODE_SPELL_MENTION);
-        if (!codespellDiagnostics.length) {
+        const CodesmellDiagnostics = context.diagnostics.filter((diagnostic) => diagnostic.code === diagnostics_1.CODE_SMELL_MENTION);
+        if (!CodesmellDiagnostics.length) {
             return [];
         }
-        codespellDiagnostics.forEach((diagnostic) => {
+        CodesmellDiagnostics.forEach((diagnostic) => {
             actions = actions.concat(this.createFixTypoCommandCodeActions(diagnostic, document));
         });
         actions = actions.concat(ignores);
         if (!actions.length) {
             return actions;
         }
-        if (codespellDiagnostics.some((diagnostic) => diagnostic.typo.isCommon === true)) {
+        if (CodesmellDiagnostics.some((diagnostic) => diagnostic.typo.isCommon === true)) {
             const action = new vscode.CodeAction('quick fix', vscode.CodeActionKind.QuickFix);
             action.command = {
-                command: 'vscode-codespell.fixCommonTypos',
+                command: 'vscode-code-smell-gpt.fixCommonTypos',
                 title: 'Fix common typos',
                 arguments: [{ document }],
             };
@@ -41,9 +41,9 @@ class CodespellCodeAction {
     createFixTypoCommandCodeActions(diagnostic, document) {
         const actions = [];
         diagnostic.suggestions.forEach((suggestion) => {
-            const action = new vscode.CodeAction(`Code Spell Suggest: ⤷ ${suggestion}`, vscode.CodeActionKind.QuickFix);
+            const action = new vscode.CodeAction(`Code Smell Suggest: ⤷ ${suggestion}`, vscode.CodeActionKind.QuickFix);
             action.command = {
-                command: 'vscode-codespell.fixTypo',
+                command: 'vscode-code-smell-gpt.fixTypo',
                 title: 'Fix it',
                 arguments: [
                     {
@@ -62,8 +62,8 @@ class CodespellCodeAction {
         return actions;
     }
 }
-exports.CodespellCodeAction = CodespellCodeAction;
-CodespellCodeAction.providedCodeActionKinds = [
+exports.CodesmellCodeAction = CodesmellCodeAction;
+CodesmellCodeAction.providedCodeActionKinds = [
     vscode.CodeActionKind.QuickFix,
 ];
 //# sourceMappingURL=codeaction.js.map

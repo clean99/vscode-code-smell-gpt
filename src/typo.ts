@@ -1,13 +1,13 @@
-/** Defines `CodespellTypo` type. */
+/** Defines `CodesmellTypo` type. */
 
 import * as vscode from 'vscode';
 
 /** Carries the information of a typo. */
-export type CodespellTypo = {
+export type CodesmellTypo = {
   // Typo token.
   token: string;
   // Suggestions for fixing typo.
-  suggestions: string[];
+  suggestion: string;
   // Typo info.
   info: string;
   // Line Count.
@@ -16,10 +16,10 @@ export type CodespellTypo = {
   type?: string;
   // RegExp of token.
   regex?: RegExp;
-  // Diagnostic severity from `~/.codespell-bad-expressions.json`.
+  // Diagnostic severity from `~/.Codesmell-bad-expressions.json`.
   severity?: vscode.DiagnosticSeverity;
   // Checks if the typo appears both in PNU and DAUM services.
   isCommon?: boolean;
-  // Checks if the typo is from `~/.codespell-typos`.
+  // Checks if the typo is from `~/.Codesmell-typos`.
   isLocal?: boolean;
 };

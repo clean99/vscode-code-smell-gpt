@@ -1,11 +1,11 @@
-/** Defines `CodespellHistory` class. */
+/** Defines `CodesmellHistory` class. */
 
 import * as fs from 'fs';
 
-/** `CodespellHistory` class providing log writing. */
-export class CodespellHistory {
+/** `CodesmellHistory` class providing log writing. */
+export class CodesmellHistory {
   constructor() {
-    this.stream = fs.createWriteStream(CodespellHistory.path, {
+    this.stream = fs.createWriteStream(CodesmellHistory.path, {
       flags: 'a',
     });
   }
@@ -21,7 +21,7 @@ export class CodespellHistory {
   }
 
   public static writeOnce(log: string) {
-    fs.writeFile(CodespellHistory.path, log, { flag: 'a' }, (_) => {});
+    fs.writeFile(CodesmellHistory.path, log, { flag: 'a' }, (_) => {});
   }
 
   /**
@@ -30,15 +30,15 @@ export class CodespellHistory {
    */
   public static backupIfTooLarge(): void {
     try {
-      const stat = fs.statSync(CodespellHistory.path);
+      const stat = fs.statSync(CodesmellHistory.path);
       if (stat === undefined) {
         return;
       }
       if (stat.size > 10 * 1024 * 1024) {
         for (let i = 1; i < 10000; ++i) {
-          const newPath = `${CodespellHistory.path}.${i}`;
+          const newPath = `${CodesmellHistory.path}.${i}`;
           if (!fs.existsSync(newPath)) {
-            fs.rename(CodespellHistory.path, newPath, (_) => {});
+            fs.rename(CodesmellHistory.path, newPath, (_) => {});
             return;
           }
         }
@@ -46,8 +46,8 @@ export class CodespellHistory {
     } catch (err) {}
   }
 
-  /** File path of `.codespell-history` */
+  /** File path of `.Codesmell-history` */
   private static readonly path = `${
     process.env.HOME || process.env.USERPROFILE
-  }/.codespell-history`;
+  }/.Codesmell-history`;
 }

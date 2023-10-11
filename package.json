@@ -1,9 +1,9 @@
 {
-  "name": "vscode-codespell",
-  "displayName": "vscode-codespell",
-  "description": "A grammarly plugin for programming language. Help you to check the code you write and fix errors in a natural way.",
+  "name": "vscode-code-smell-gpt",
+  "displayName": "vscode-code-smell-gpt",
+  "description": "A grammarly extension for programming languages. Automatically review the code you write, give you suggestion, and fix errors with one click.",
   "version": "0.6.5",
-  "icon": "images/codespell.png",
+  "icon": "images/code-smell-gpt-logo.png",
   "publisher": "clean99",
   "engines": {
     "vscode": "^1.58.0"
@@ -13,19 +13,19 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:vscode-codespell.spellCheckByAll"
+    "*"
   ],
   "contributes": {
     "commands": [
       {
-        "command": "vscode-codespell.spellCheckByAll",
-        "title": "run code spell"
+        "command": "vscode-code-smell-gpt.smellCheckByAll",
+        "title": "run code smell"
       }
     ],
     "configuration": {
-      "title": "VSCode Code Spell",
+      "title": "VSCode Code Smell",
       "properties": {
-        "vscode-codespell.gptKey": {
+        "vscode-code-smell-gpt.gptKey": {
           "type": "string",
           "description": "Config GPT API key"
         }
@@ -33,17 +33,17 @@
     }
   },
   "main": "./out/extension.js",
-  "homepage": "https://github.com/clean99/vscode-codespelll",
+  "homepage": "https://github.com/clean99/vscode-code-smell-gpt",
   "author": {
-    "name": "9beach",
-    "email": "9beach@gmail.com"
+    "name": "clean99",
+    "email": "xff9924@gmail.com"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/clean99/vscode-codespell.git"
+    "url": "git+https://github.com/clean99/vscode-code-smell-gpt.git"
   },
   "bugs": {
-    "url": "https://github.com/clean99/vscode-codespell/issues"
+    "url": "https://github.com/clean99/vscode-code-smell-gpt/issues"
   },
   "license": "MIT",
   "keywords": [
@@ -53,9 +53,11 @@
     "OPEN AI",
     "Spell Check",
     "SpellCheck",
+    "Code Smells",
+    "Code Smell",
     "VS Code",
     "vscode",
-    "spell",
+    "smell",
     "extension"
   ],
   "scripts": {

@@ -5,66 +5,86 @@
 
 import * as vscode from 'vscode';
 
-import { CodespellTypo } from './typo';
+import { CodesmellTypo } from './typo';
 import { DocumentsToTypos } from './spellcheck';
-import { CodespellIgnore } from './ignore';
-import { CodespellHistory } from './history';
-import { CodespellCodeAction } from './codeaction';
+import { CodesmellIgnore } from './ignore';
+import { CodesmellHistory } from './history';
+import { CodesmellCodeAction } from './codeaction';
 import {
   spellCheckByAll,
 } from './spellcheck-commands';
 import {
   subscribeDiagnosticsToDocumentChanges,
-  getCodespellDiagnostics,
+  getCodesmellDiagnostics,
   refreshDiagnostics,
 } from './diagnostics';
 import { initChat } from './chat';
+import { getUserKey, setConfigError, setInitLoading, setLoadedSuccess } from './utils';
+
+export const myStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
 
 /** Called once the extension is activated. */
 export function activate(context: vscode.ExtensionContext) {
-  CodespellHistory.backupIfTooLarge();
-  const userGPTKey = vscode.workspace.getConfiguration('vscode-codespell').get<string>('gptKey');
+  context.subscriptions.push(myStatusBarItem);
+  const userGPTKey = getUserKey();
+  setInitLoading();
+  myStatusBarItem.show();
+  CodesmellHistory.backupIfTooLarge();
+  
   if(userGPTKey) {
     initChat(userGPTKey);
+    setLoadedSuccess();
   } else {
-    vscode.window.showInformationMessage(
-      `Please config your gpt key first!`,
-    );
+    setConfigError();
+    const checkAPIKey = vscode.workspace.onDidSaveTextDocument(async document => {
+      const newUserGPTKey = getUserKey();
+      if(newUserGPTKey) {
+        initChat(newUserGPTKey);
+        checkAPIKey.dispose();
+        setLoadedSuccess();
+      }
+    });
+  
+  
+    // Register disposable
+    context.subscriptions.push(checkAPIKey);
+    return;
   }
+  
   
   // Subscribes `refreshDiagnostics` to documents change events.
   subscribeDiagnosticsToDocumentChanges(context);
 
-  // Registers the code actions for `vscode-codespell.fixTypo`,
-  // `vscode-codespell.fixAllTypos`, and `vscode-codespell.fixCommonTypos`.
+  // Registers the code actions for `vscode-code-smell-gpt.fixTypo`,
+  // `vscode-code-smell-gpt.fixAllTypos`, and `vscode-code-smell-gpt.fixCommonTypos`.
   context.subscriptions.push(
     vscode.languages.registerCodeActionsProvider(
       '*',
-      new CodespellCodeAction(),
-      { providedCodeActionKinds: CodespellCodeAction.providedCodeActionKinds },
+      new CodesmellCodeAction(),
+      { providedCodeActionKinds: CodesmellCodeAction.providedCodeActionKinds },
     ),
   );
 
   // Binds code action commands to corresponding functions.
   context.subscriptions.push(
-    vscode.commands.registerCommand('vscode-codespell.fixTypo', fixTypo),
+    vscode.commands.registerCommand('vscode-code-smell-gpt.fixTypo', fixTypo),
   );
   context.subscriptions.push(
-    vscode.commands.registerCommand('vscode-codespell.ignoreTypo', ignoreTypo),
+    vscode.commands.registerCommand('vscode-code-smell-gpt.ignoreTypo', ignoreTypo),
   );
   context.subscriptions.push(
-    vscode.commands.registerCommand('vscode-codespell.fixAllTypos', fixAllTypos),
+    vscode.commands.registerCommand('vscode-code-smell-gpt.fixAllTypos', fixAllTypos),
   );
   context.subscriptions.push(
     vscode.commands.registerCommand(
-      'vscode-codespell.fixCommonTypos',
+      'vscode-code-smell-gpt.fixCommonTypos',
       fixCommonTypos,
     ),
   );
 
   context.subscriptions.push(
     vscode.commands.registerCommand(
-      'vscode-codespell.spellCheckByAll',
+      'vscode-code-smell-gpt.spellCheckByAll',
       spellCheckByAll,
     ),
   );
@@ -73,7 +93,7 @@ export function activate(context: vscode.ExtensionContext) {
 /**
  * Fixes the typo of the given range of the document.
  *
- * Called by `vscode-codespell.fixTypo` code action command.
+ * Called by `vscode-code-smell-gpt.fixTypo` code action command.
  */
 function fixTypo(args: {
   document: vscode.TextDocument;
@@ -83,21 +103,21 @@ function fixTypo(args: {
 }) {
   const edit = new vscode.WorkspaceEdit();
   edit.replace(args.document.uri, args.range, args.suggestion);
-  CodespellHistory.writeOnce(`${args.token} -> ${args.suggestion}\n`);
+  CodesmellHistory.writeOnce(`${args.token} -> ${args.suggestion}\n`);
   vscode.workspace.applyEdit(edit);
 }
 
 /**
- * Adds given token to `~/.codespell-ignore`).
+ * Adds given token to `~/.Codesmell-ignore`).
  *
- * Called by `vscode-codespell.ignoreTypo` code action command.
+ * Called by `vscode-code-smell-gpt.ignoreTypo` code action command.
  */
 function ignoreTypo(args: { document: vscode.TextDocument; token: string }) {
-  CodespellIgnore.append(args.token);
+  CodesmellIgnore.append(args.token);
   const typos = DocumentsToTypos.getTypos(args.document);
   DocumentsToTypos.setTypos(
     args.document,
-    typos.filter((typo: CodespellTypo) => typo.token !== args.token),
+    typos.filter((typo: CodesmellTypo) => typo.token !== args.token),
   );
   refreshDiagnostics(args.document);
 }
@@ -105,14 +125,14 @@ function ignoreTypo(args: { document: vscode.TextDocument; token: string }) {
 /**
  * Fixes all the typos of the document.
  *
- * Called by `vscode-codespell.fixAllTypos` code action command.
+ * Called by `vscode-code-smell-gpt.fixAllTypos` code action command.
  */
 function fixAllTypos(args: { document: vscode.TextDocument }) {
   const edit = new vscode.WorkspaceEdit();
   const uri = args.document.uri;
-  const hist = new CodespellHistory();
+  const hist = new CodesmellHistory();
 
-  getCodespellDiagnostics(args.document).forEach((diagnostic) => {
+  getCodesmellDiagnostics(args.document).forEach((diagnostic) => {
     if (!diagnostic.suggestions.length) {
       return;
     }
@@ -127,14 +147,14 @@ function fixAllTypos(args: { document: vscode.TextDocument }) {
 /**
  * Fixes all the typos of the document common in PNU and DAUM services.
  *
- * Called by `vscode-codespell.fixCommonTypos` code action command.
+ * Called by `vscode-code-smell-gpt.fixCommonTypos` code action command.
  */
 function fixCommonTypos(args: { document: vscode.TextDocument }) {
   const edit = new vscode.WorkspaceEdit();
   const uri = args.document.uri;
-  const hist = new CodespellHistory();
+  const hist = new CodesmellHistory();
 
-  getCodespellDiagnostics(args.document).forEach((diagnostic) => {
+  getCodesmellDiagnostics(args.document).forEach((diagnostic) => {
     if (!diagnostic.suggestions.length || !diagnostic.typo.isCommon) {
       return;
     }

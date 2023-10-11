@@ -1,17 +1,17 @@
 /**
- * Defines `CodespellCodeAction` class.
+ * Defines `CodesmellCodeAction` class.
  *
- * `CodespellTypo` makes `CodespellDiagnostic` makes `CodespellCodeAction`.
+ * `CodesmellTypo` makes `CodesmellDiagnostic` makes `CodesmellCodeAction`.
  */
 
 import * as vscode from 'vscode';
-import { CODE_SPELL_MENTION, CodespellDiagnostic } from './diagnostics';
+import { CODE_SMELL_MENTION, CodesmellDiagnostic } from './diagnostics';
 
 /**
- * Provides code actions for the commands of `vscode-codespell.fixTypo` and
- * `vscode-codespell.fixAllTypos`.
+ * Provides code actions for the commands of `vscode-code-smell-gpt.fixTypo` and
+ * `vscode-code-smell-gpt.fixAllTypos`.
  */
-export class CodespellCodeAction implements vscode.CodeActionProvider {
+export class CodesmellCodeAction implements vscode.CodeActionProvider {
   public static readonly providedCodeActionKinds = [
     vscode.CodeActionKind.QuickFix,
   ];
@@ -25,15 +25,15 @@ export class CodespellCodeAction implements vscode.CodeActionProvider {
     let actions: vscode.CodeAction[] = [];
     const ignores: vscode.CodeAction[] = [];
 
-    const codespellDiagnostics = context.diagnostics.filter(
-      (diagnostic) => diagnostic.code === CODE_SPELL_MENTION,
-    ) as CodespellDiagnostic[];
+    const CodesmellDiagnostics = context.diagnostics.filter(
+      (diagnostic) => diagnostic.code === CODE_SMELL_MENTION,
+    ) as CodesmellDiagnostic[];
 
-    if (!codespellDiagnostics.length) {
+    if (!CodesmellDiagnostics.length) {
       return [];
     }
 
-    codespellDiagnostics.forEach((diagnostic) => {
+    CodesmellDiagnostics.forEach((diagnostic) => {
       actions = actions.concat(
         this.createFixTypoCommandCodeActions(diagnostic, document),
       );
@@ -46,7 +46,7 @@ export class CodespellCodeAction implements vscode.CodeActionProvider {
     }
 
     if (
-      codespellDiagnostics.some(
+      CodesmellDiagnostics.some(
         (diagnostic) => diagnostic.typo.isCommon === true,
       )
     ) {
@@ -56,7 +56,7 @@ export class CodespellCodeAction implements vscode.CodeActionProvider {
       );
 
       action.command = {
-        command: 'vscode-codespell.fixCommonTypos',
+        command: 'vscode-code-smell-gpt.fixCommonTypos',
         title: 'Fix common typos',
         arguments: [{ document }],
       };
@@ -68,18 +68,18 @@ export class CodespellCodeAction implements vscode.CodeActionProvider {
   }
 
   private createFixTypoCommandCodeActions(
-    diagnostic: CodespellDiagnostic,
+    diagnostic: CodesmellDiagnostic,
     document: vscode.TextDocument,
   ): vscode.CodeAction[] {
     const actions: vscode.CodeAction[] = [];
 
     diagnostic.suggestions.forEach((suggestion: string) => {
       const action = new vscode.CodeAction(
-        `Code Spell Suggest: ⤷ ${suggestion}`,
+        `Code Smell Suggest: ⤷ ${suggestion}`,
         vscode.CodeActionKind.QuickFix,
       );
       action.command = {
-        command: 'vscode-codespell.fixTypo',
+        command: 'vscode-code-smell-gpt.fixTypo',
         title: 'Fix it',
         arguments: [
           {

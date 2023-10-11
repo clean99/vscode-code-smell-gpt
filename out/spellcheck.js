@@ -12,26 +12,36 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.spellCheck = exports.DocumentsToTypos = void 0;
 const chat_1 = require("./chat");
-/** Class for dictionary of `vscode.TextDocument` to `CodespellTypo[]`. */
+const utils_1 = require("./utils");
+/** Class for dictionary of `vscode.TextDocument` to `CodesmellTypo[]`. */
 class DocumentsToTypos {
 }
 exports.DocumentsToTypos = DocumentsToTypos;
-/** Dictionary of `vscode.TextDocument` to `CodespellTypo[]`. */
+/** Dictionary of `vscode.TextDocument` to `CodesmellTypo[]`. */
 DocumentsToTypos.docs2typos = new WeakMap();
 /** Gets typos of the document. */
 DocumentsToTypos.getTypos = (doc) => DocumentsToTypos.docs2typos.get(doc);
 /** Sets typos of the document. */
 DocumentsToTypos.setTypos = (doc, typos) => DocumentsToTypos.docs2typos.set(doc, typos);
 /**
- * Spell checks given document, makes `CodespellTypo[]`, and sets them to
+ * Spell checks given document, makes `CodesmellTypo[]`, and sets them to
  * `DocumentsToTypos`.
  */
 function spellCheck(document, differences) {
     return __awaiter(this, void 0, void 0, function* () {
-        const doc = document;
-        const text = differences ? differences.join('「」') : doc.getText();
-        const typos = yield chat_1.getTypos(text);
-        DocumentsToTypos.setTypos(doc, typos);
+        utils_1.setSpinning();
+        try {
+            const doc = document;
+            const text = differences ? differences.join('「」') : doc.getText();
+            const typos = yield chat_1.getTypos(text);
+            DocumentsToTypos.setTypos(doc, typos);
+        }
+        catch (e) {
+            console.log('error', e);
+        }
+        finally {
+            utils_1.setLoadedSuccess();
+        }
     });
 }
 exports.spellCheck = spellCheck;

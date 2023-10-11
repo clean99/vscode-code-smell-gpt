@@ -13,7 +13,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.subscribeDiagnosticsToDocumentChanges = exports.CodespellDiagnostic = exports.refreshDiagnostics = exports.escapeRegExp = exports.getCodespellDiagnostics = exports.CODE_SPELL_MENTION = void 0;
+exports.subscribeDiagnosticsToDocumentChanges = exports.CodesmellDiagnostic = exports.refreshDiagnostics = exports.escapeRegExp = exports.getCodesmellDiagnostics = exports.CODE_SMELL_MENTION = void 0;
 const vscode = require("vscode");
 const spellcheck_1 = require("./spellcheck");
 const utils_1 = require("./utils");
@@ -21,14 +21,14 @@ const _ = require("lodash");
 /**
  * Used to associate diagnostic entries with code actions.
  */
-exports.CODE_SPELL_MENTION = 'codespell';
-/** Dictionary of `vscode.TextDocument` to `codespellDiagnostic[]`. */
-const codespellDiagnostics = vscode.languages.createDiagnosticCollection('codespell');
+exports.CODE_SMELL_MENTION = 'Codesmell';
+/** Dictionary of `vscode.TextDocument` to `CodesmellDiagnostic[]`. */
+const CodesmellDiagnostics = vscode.languages.createDiagnosticCollection('Codesmell');
 /** Returns the diagnostics for the given document. */
-function getCodespellDiagnostics(doc) {
-    return codespellDiagnostics.get(doc.uri);
+function getCodesmellDiagnostics(doc) {
+    return CodesmellDiagnostics.get(doc.uri);
 }
-exports.getCodespellDiagnostics = getCodespellDiagnostics;
+exports.getCodesmellDiagnostics = getCodesmellDiagnostics;
 function escapeRegExp(text) {
     return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
 }
@@ -56,14 +56,14 @@ function refreshDiagnostics(doc) {
             // Get line and character for end position
             const endPos = doc.positionAt(match.index + match[0].length);
             const range = new vscode.Range(startPos, endPos);
-            diagnostics.push(new CodespellDiagnostic(range, typo, match));
+            diagnostics.push(new CodesmellDiagnostic(range, typo, match));
         }
     });
-    codespellDiagnostics.set(doc.uri, diagnostics);
+    CodesmellDiagnostics.set(doc.uri, diagnostics);
 }
 exports.refreshDiagnostics = refreshDiagnostics;
 /** Diagnostic data structure containing a typo for a range of a document. */
-class CodespellDiagnostic extends vscode.Diagnostic {
+class CodesmellDiagnostic extends vscode.Diagnostic {
     constructor(range, typo, matched) {
         super(range, typo.info, typo.severity !== undefined
             ? typo.severity
@@ -71,15 +71,15 @@ class CodespellDiagnostic extends vscode.Diagnostic {
                 ? vscode.DiagnosticSeverity.Warning
                 : vscode.DiagnosticSeverity.Information);
         this.typo = typo;
-        this.code = exports.CODE_SPELL_MENTION;
+        this.code = exports.CODE_SMELL_MENTION;
         this.token = typo.token;
-        this.suggestions = typo.suggestions;
+        this.suggestions = [typo.suggestion];
     }
 }
-exports.CodespellDiagnostic = CodespellDiagnostic;
+exports.CodesmellDiagnostic = CodesmellDiagnostic;
 /** Subscribes `refreshDiagnostics` to documents change events. */
 function subscribeDiagnosticsToDocumentChanges(context) {
-    context.subscriptions.push(codespellDiagnostics);
+    context.subscriptions.push(CodesmellDiagnostics);
     // A Map to store the last saved content of documents.
     let lastSavedContent = new Map();
     // Listen for save events
@@ -87,8 +87,8 @@ function subscribeDiagnosticsToDocumentChanges(context) {
         refreshDiagnostics(vscode.window.activeTextEditor.document);
         // Retrieve the document's URI as a string to use as a key
         let documentUri = vscode.window.activeTextEditor.document.uri.toString();
-        // Get the content at the time of save
-        let currentContent = vscode.window.activeTextEditor.document.getText();
+        // init content to be empty, so that when user first click save, it will reflect all changes.
+        let currentContent = '';
         lastSavedContent.set(documentUri, currentContent);
     }
     let saveDisposable = vscode.workspace.onDidSaveTextDocument((document) => __awaiter(this, void 0, void 0, function* () {
@@ -100,7 +100,6 @@ function subscribeDiagnosticsToDocumentChanges(context) {
         let previousContent = lastSavedContent.get(documentUri) || "";
         // Get differences between the previous content and current content
         let differences = utils_1.findDifferences(previousContent, currentContent);
-        console.log("Differences:", differences);
         if (!_.isEmpty(differences)) {
             yield spellcheck_1.spellCheck(document, differences);
             refreshDiagnostics(document);
@@ -110,7 +109,6 @@ function subscribeDiagnosticsToDocumentChanges(context) {
     }));
     let docChangeListener = vscode.workspace.onDidChangeTextDocument(() => {
         var _a;
-        console.log('Document Changed');
         if ((_a = vscode.window.activeTextEditor) === null || _a === void 0 ? void 0 : _a.document) {
             refreshDiagnostics(vscode.window.activeTextEditor.document);
         }
@@ -122,7 +120,7 @@ function subscribeDiagnosticsToDocumentChanges(context) {
             refreshDiagnostics(editor.document);
         }
     }));
-    context.subscriptions.push(vscode.workspace.onDidCloseTextDocument((doc) => codespellDiagnostics.delete(doc.uri)));
+    context.subscriptions.push(vscode.workspace.onDidCloseTextDocument((doc) => CodesmellDiagnostics.delete(doc.uri)));
 }
 exports.subscribeDiagnosticsToDocumentChanges = subscribeDiagnosticsToDocumentChanges;
 //# sourceMappingURL=diagnostics.js.map

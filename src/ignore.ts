@@ -1,35 +1,35 @@
-/** Defines `CodespellIgnore` class. */
+/** Defines `CodesmellIgnore` class. */
 
 import * as fs from 'fs';
 import { Minimatch } from 'minimatch';
 
 /**
- * `CodespellIgnore` class having glob patterns to match typo tokens. If a token
+ * `CodesmellIgnore` class having glob patterns to match typo tokens. If a token
  * is matched to a glob pattern, it's ignored.
  */
-export class CodespellIgnore {
+export class CodesmellIgnore {
   constructor() {
-    this.myMatches = CodespellIgnore.get();
+    this.myMatches = CodesmellIgnore.get();
   }
 
-  /** Checks if token matches content of `.codespell-ignore` */
+  /** Checks if token matches content of `.Codesmell-ignore` */
   match = (token: string) =>
     this.myMatches.match(token);
 
-  /** Checks if valid content of `.codespell-ignore` is empty */
+  /** Checks if valid content of `.Codesmell-ignore` is empty */
   empty = () => this.myMatches.empty;
 
 
-  /** File path of `.codespell-ignore` */
+  /** File path of `.Codesmell-ignore` */
   private static readonly path = `${
     process.env.HOME || process.env.USERPROFILE
-  }/.codespell-ignore`;
+  }/.Codesmell-ignore`;
 
-  /** Glob patterns in `.codespell-ignore`. */
+  /** Glob patterns in `.Codesmell-ignore`. */
   private static readonly emptyMatches = new Minimatch('');
-  private static matches = CodespellIgnore.emptyMatches;
+  private static matches = CodesmellIgnore.emptyMatches;
 
-  /** Last modified time of `.codespell-ignore` */
+  /** Last modified time of `.Codesmell-ignore` */
   private static lastModified = -1;
 
   /** Latest glob patterns. */
@@ -38,15 +38,15 @@ export class CodespellIgnore {
   /** Adds a glob pattern to the end of file */
   static append = (pattern: string): void => {
     fs.writeFileSync(
-      CodespellIgnore.path,
-      CodespellIgnore.needLN() ? `\n${pattern}\n` : `${pattern}\n`,
+      CodesmellIgnore.path,
+      CodesmellIgnore.needLN() ? `\n${pattern}\n` : `${pattern}\n`,
       { flag: 'a' },
     );
   };
 
-  /** Checks if the last char of the content of `.codespell-ignore` is '\n'. */
+  /** Checks if the last char of the content of `.Codesmell-ignore` is '\n'. */
   private static needLN() {
-    const matches = CodespellIgnore.get();
+    const matches = CodesmellIgnore.get();
 
     if (
       matches.empty ||
@@ -57,38 +57,38 @@ export class CodespellIgnore {
     return true;
   }
 
-  /** Reads glob patterns in `.codespell-ignore`. */
+  /** Reads glob patterns in `.Codesmell-ignore`. */
   private static get() {
     try {
-      const stat = fs.statSync(CodespellIgnore.path);
+      const stat = fs.statSync(CodesmellIgnore.path);
 
       if (stat === undefined) {
-        CodespellIgnore.matches = CodespellIgnore.emptyMatches;
-        return CodespellIgnore.matches;
+        CodesmellIgnore.matches = CodesmellIgnore.emptyMatches;
+        return CodesmellIgnore.matches;
       }
 
-      if (CodespellIgnore.lastModified === stat.mtimeMs) {
-        return CodespellIgnore.matches;
+      if (CodesmellIgnore.lastModified === stat.mtimeMs) {
+        return CodesmellIgnore.matches;
       }
 
-      CodespellIgnore.lastModified = stat.mtimeMs;
+      CodesmellIgnore.lastModified = stat.mtimeMs;
 
       const ignores = `{${fs
-        .readFileSync(CodespellIgnore.path, 'utf8')
+        .readFileSync(CodesmellIgnore.path, 'utf8')
         .replace(/[,{}]/g, '\\$&')
         .replace(/\n\n*/g, ',')}}`;
 
       if (ignores.length >= 3) {
-        CodespellIgnore.matches = new Minimatch(ignores);
+        CodesmellIgnore.matches = new Minimatch(ignores);
       } else {
-        CodespellIgnore.matches = CodespellIgnore.emptyMatches;
+        CodesmellIgnore.matches = CodesmellIgnore.emptyMatches;
       }
     } catch (err) {
       // @ts-ignore
       console.log(err.message);
 
-      CodespellIgnore.matches = CodespellIgnore.emptyMatches;
+      CodesmellIgnore.matches = CodesmellIgnore.emptyMatches;
     }
-    return CodespellIgnore.matches;
+    return CodesmellIgnore.matches;
   }
 }

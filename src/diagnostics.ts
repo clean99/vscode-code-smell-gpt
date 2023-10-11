@@ -5,23 +5,24 @@
 
 import * as vscode from 'vscode';
 import { DocumentsToTypos, spellCheck } from './spellcheck';
-import { CodespellTypo } from './typo';
-import { findDifferences } from './utils';
+import { CodesmellTypo } from './typo';
+import { findDifferences, setLoadedSuccess, setSpinning } from './utils';
 import * as _ from 'lodash';
+import { initChat } from './chat';
 /**
  * Used to associate diagnostic entries with code actions.
  */
-export const CODE_SPELL_MENTION = 'codespell';
+export const CODE_SMELL_MENTION = 'Codesmell';
 
-/** Dictionary of `vscode.TextDocument` to `codespellDiagnostic[]`. */
-const codespellDiagnostics =
-  vscode.languages.createDiagnosticCollection('codespell');
+/** Dictionary of `vscode.TextDocument` to `CodesmellDiagnostic[]`. */
+const CodesmellDiagnostics =
+  vscode.languages.createDiagnosticCollection('Codesmell');
 
 /** Returns the diagnostics for the given document. */
-export function getCodespellDiagnostics(
+export function getCodesmellDiagnostics(
   doc: vscode.TextDocument,
-): CodespellDiagnostic[] {
-  return codespellDiagnostics.get(doc.uri) as CodespellDiagnostic[];
+): CodesmellDiagnostic[] {
+  return CodesmellDiagnostics.get(doc.uri) as CodesmellDiagnostic[];
 }
 
 export function escapeRegExp(text: string): string {
@@ -42,7 +43,7 @@ export function refreshDiagnostics(doc: vscode.TextDocument): void {
 
   const diagnostics: vscode.Diagnostic[] = [];
 
-  typos.forEach((typo: CodespellTypo) => {
+  typos.forEach((typo: CodesmellTypo) => {
     let match: RegExpExecArray | null;
     // Assume token is not a regular expression special character. If it is, need to escape it.
     // The 'm' flag enables multi-line matching
@@ -55,7 +56,7 @@ export function refreshDiagnostics(doc: vscode.TextDocument): void {
         const endPos = doc.positionAt(match.index + match[0].length);
         const range = new vscode.Range(startPos, endPos);
         diagnostics.push(
-            new CodespellDiagnostic(
+            new CodesmellDiagnostic(
                 range,
                 typo,
                 match
@@ -64,18 +65,18 @@ export function refreshDiagnostics(doc: vscode.TextDocument): void {
     }
 });
 
-  codespellDiagnostics.set(doc.uri, diagnostics);
+  CodesmellDiagnostics.set(doc.uri, diagnostics);
 }
 
 /** Diagnostic data structure containing a typo for a range of a document. */
-export class CodespellDiagnostic extends vscode.Diagnostic {
-  typo: CodespellTypo;
+export class CodesmellDiagnostic extends vscode.Diagnostic {
+  typo: CodesmellTypo;
   suggestions: string[];
   token: string;
 
   constructor(
     range: vscode.Range,
-    typo: CodespellTypo,
+    typo: CodesmellTypo,
     matched: RegExpExecArray,
   ) {
     super(
@@ -89,9 +90,9 @@ export class CodespellDiagnostic extends vscode.Diagnostic {
     );
 
     this.typo = typo;
-    this.code = CODE_SPELL_MENTION;
+    this.code = CODE_SMELL_MENTION;
     this.token = typo.token;
-    this.suggestions = typo.suggestions;
+    this.suggestions = [typo.suggestion];
   }
 }
 
@@ -99,18 +100,17 @@ export class CodespellDiagnostic extends vscode.Diagnostic {
 export function subscribeDiagnosticsToDocumentChanges(
   context: vscode.ExtensionContext,
 ): void {
-  context.subscriptions.push(codespellDiagnostics);
+  context.subscriptions.push(CodesmellDiagnostics);
   // A Map to store the last saved content of documents.
   let lastSavedContent: Map<string, string> = new Map();
 
   // Listen for save events
   if (vscode.window.activeTextEditor) {
     refreshDiagnostics(vscode.window.activeTextEditor.document);
-     // Retrieve the document's URI as a string to use as a key
-     let documentUri = vscode.window.activeTextEditor.document.uri.toString();
-
-     // Get the content at the time of save
-     let currentContent = vscode.window.activeTextEditor.document.getText();
+    // Retrieve the document's URI as a string to use as a key
+    let documentUri = vscode.window.activeTextEditor.document.uri.toString();
+    // init content to be empty, so that when user first click save, it will reflect all changes.
+    let currentContent = '';
     lastSavedContent.set(documentUri, currentContent);
   }
 
@@ -127,7 +127,6 @@ export function subscribeDiagnosticsToDocumentChanges(
 
         // Get differences between the previous content and current content
         let differences = findDifferences(previousContent, currentContent);
-        console.log("Differences:", differences);
         if(!_.isEmpty(differences)) {
           await spellCheck(document, differences)
           refreshDiagnostics(document);
@@ -136,17 +135,16 @@ export function subscribeDiagnosticsToDocumentChanges(
         // Update the last saved content in the map
         lastSavedContent.set(documentUri, currentContent);
     });
+    
 
     let docChangeListener = vscode.workspace.onDidChangeTextDocument(() => {
-      console.log('Document Changed');
       if(vscode.window.activeTextEditor?.document) {
         refreshDiagnostics(vscode.window.activeTextEditor.document);
       }
-  });
+    });
 
-
-    // Register disposable
-    context.subscriptions.push(saveDisposable, docChangeListener);
+  // Register disposable
+  context.subscriptions.push(saveDisposable, docChangeListener);
 
   context.subscriptions.push(
     vscode.window.onDidChangeActiveTextEditor((editor) => {
@@ -158,7 +156,7 @@ export function subscribeDiagnosticsToDocumentChanges(
 
   context.subscriptions.push(
     vscode.workspace.onDidCloseTextDocument((doc) =>
-      codespellDiagnostics.delete(doc.uri),
+      CodesmellDiagnostics.delete(doc.uri),
     ),
   );
   

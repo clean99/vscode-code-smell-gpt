@@ -1,4 +1,4 @@
 "use strict";
-/** Defines `CodespellTypo` type. */
+/** Defines `CodesmellTypo` type. */
 Object.defineProperty(exports, "__esModule", { value: true });
 //# sourceMappingURL=typo.js.map
