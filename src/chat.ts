@@ -53,9 +53,9 @@ export const getTypos = async (code: string): Promise<CodesmellTypo[]>  => {
         ${code}
         \`\`\`
     `);
-
+    console.log('codeBlock', promptResult)
     const codeBlock = getCodeBlock(promptResult);
-
+    console.log('codeBlock', codeBlock)
     if (codeBlock) {
     return JSON.parse(codeBlock);
     }

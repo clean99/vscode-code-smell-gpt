@@ -28,19 +28,21 @@ DocumentsToTypos.setTypos = (doc, typos) => DocumentsToTypos.docs2typos.set(doc,
  * `DocumentsToTypos`.
  */
 function spellCheck(document, differences) {
+    var _a;
     return __awaiter(this, void 0, void 0, function* () {
-        utils_1.setSpinning();
+        (0, utils_1.setSpinning)();
         try {
             const doc = document;
             const text = differences ? differences.join('「」') : doc.getText();
-            const typos = yield chat_1.getTypos(text);
-            DocumentsToTypos.setTypos(doc, typos);
+            const typos = yield (0, chat_1.getTypos)(text);
+            const previousTypos = (_a = DocumentsToTypos.getTypos(doc)) !== null && _a !== void 0 ? _a : [];
+            DocumentsToTypos.setTypos(doc, [...previousTypos, ...typos]);
         }
         catch (e) {
             console.log('error', e);
         }
         finally {
-            utils_1.setLoadedSuccess();
+            (0, utils_1.setLoadedSuccess)();
         }
     });
 }

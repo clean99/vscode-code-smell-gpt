@@ -26,12 +26,12 @@ function spellCheckWithProgress(title) {
     }, () => __awaiter(this, void 0, void 0, function* () {
         if (editor) {
             try {
-                yield spellcheck_1.spellCheck(editor.document);
+                yield (0, spellcheck_1.spellCheck)(editor.document);
             }
             catch (err) {
                 vscode.window.showInformationMessage(err);
             }
-            diagnostics_1.refreshDiagnostics(editor.document);
+            (0, diagnostics_1.refreshDiagnostics)(editor.document);
         }
     }));
 }

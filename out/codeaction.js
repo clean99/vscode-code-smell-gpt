@@ -8,6 +8,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CodesmellCodeAction = void 0;
 const vscode = require("vscode");
 const diagnostics_1 = require("./diagnostics");
+const _ = require("lodash");
 /**
  * Provides code actions for the commands of `vscode-code-smell-gpt.fixTypo` and
  * `vscode-code-smell-gpt.fixAllTypos`.
@@ -41,7 +42,7 @@ class CodesmellCodeAction {
     createFixTypoCommandCodeActions(diagnostic, document) {
         const actions = [];
         diagnostic.suggestions.forEach((suggestion) => {
-            const action = new vscode.CodeAction(`Code Smell Suggest: ⤷ ${suggestion}`, vscode.CodeActionKind.QuickFix);
+            const action = new vscode.CodeAction(`Code Smell Suggest: ⤷ ${_.isEmpty(suggestion) ? 'remove code' : suggestion}`, vscode.CodeActionKind.QuickFix);
             action.command = {
                 command: 'vscode-code-smell-gpt.fixTypo',
                 title: 'Fix it',

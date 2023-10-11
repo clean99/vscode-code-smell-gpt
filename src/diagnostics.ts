@@ -6,9 +6,8 @@
 import * as vscode from 'vscode';
 import { DocumentsToTypos, spellCheck } from './spellcheck';
 import { CodesmellTypo } from './typo';
-import { findDifferences, setLoadedSuccess, setSpinning } from './utils';
+import { findDifferences } from './utils';
 import * as _ from 'lodash';
-import { initChat } from './chat';
 /**
  * Used to associate diagnostic entries with code actions.
  */
@@ -25,8 +24,8 @@ export function getCodesmellDiagnostics(
   return CodesmellDiagnostics.get(doc.uri) as CodesmellDiagnostic[];
 }
 
-export function escapeRegExp(text: string): string {
-    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+export function escapeRegExp(text?: string): string {
+    return text?.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&') ?? '';
 }
 
 /**
@@ -42,7 +41,6 @@ export function refreshDiagnostics(doc: vscode.TextDocument): void {
   }
 
   const diagnostics: vscode.Diagnostic[] = [];
-
   typos.forEach((typo: CodesmellTypo) => {
     let match: RegExpExecArray | null;
     // Assume token is not a regular expression special character. If it is, need to escape it.
@@ -59,7 +57,6 @@ export function refreshDiagnostics(doc: vscode.TextDocument): void {
             new CodesmellDiagnostic(
                 range,
                 typo,
-                match
             ),
         );
     }
@@ -77,11 +74,10 @@ export class CodesmellDiagnostic extends vscode.Diagnostic {
   constructor(
     range: vscode.Range,
     typo: CodesmellTypo,
-    matched: RegExpExecArray,
   ) {
     super(
       range,
-      typo.info,
+      typo.info ?? '',
       typo.severity !== undefined
         ? typo.severity
         : typo.isCommon !== false

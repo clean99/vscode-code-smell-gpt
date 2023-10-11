@@ -32,7 +32,8 @@ export async function spellCheck(
     const doc = document;
     const text = differences ? differences.join('「」') : doc.getText();
     const typos = await getTypos(text);
-    DocumentsToTypos.setTypos(doc, typos);
+    const previousTypos = DocumentsToTypos.getTypos(doc) ?? [];
+    DocumentsToTypos.setTypos(doc, [...previousTypos, ...typos]);
   } catch(e) {
     console.log('error', e);
   } finally {

@@ -30,7 +30,8 @@ function getCodesmellDiagnostics(doc) {
 }
 exports.getCodesmellDiagnostics = getCodesmellDiagnostics;
 function escapeRegExp(text) {
-    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+    var _a;
+    return (_a = text === null || text === void 0 ? void 0 : text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')) !== null && _a !== void 0 ? _a : '';
 }
 exports.escapeRegExp = escapeRegExp;
 /**
@@ -56,7 +57,7 @@ function refreshDiagnostics(doc) {
             // Get line and character for end position
             const endPos = doc.positionAt(match.index + match[0].length);
             const range = new vscode.Range(startPos, endPos);
-            diagnostics.push(new CodesmellDiagnostic(range, typo, match));
+            diagnostics.push(new CodesmellDiagnostic(range, typo));
         }
     });
     CodesmellDiagnostics.set(doc.uri, diagnostics);
@@ -64,8 +65,9 @@ function refreshDiagnostics(doc) {
 exports.refreshDiagnostics = refreshDiagnostics;
 /** Diagnostic data structure containing a typo for a range of a document. */
 class CodesmellDiagnostic extends vscode.Diagnostic {
-    constructor(range, typo, matched) {
-        super(range, typo.info, typo.severity !== undefined
+    constructor(range, typo) {
+        var _a;
+        super(range, (_a = typo.info) !== null && _a !== void 0 ? _a : '', typo.severity !== undefined
             ? typo.severity
             : typo.isCommon !== false
                 ? vscode.DiagnosticSeverity.Warning
@@ -99,9 +101,9 @@ function subscribeDiagnosticsToDocumentChanges(context) {
         // Retrieve the last saved content from the map
         let previousContent = lastSavedContent.get(documentUri) || "";
         // Get differences between the previous content and current content
-        let differences = utils_1.findDifferences(previousContent, currentContent);
+        let differences = (0, utils_1.findDifferences)(previousContent, currentContent);
         if (!_.isEmpty(differences)) {
-            yield spellcheck_1.spellCheck(document, differences);
+            yield (0, spellcheck_1.spellCheck)(document, differences);
             refreshDiagnostics(document);
         }
         // Update the last saved content in the map

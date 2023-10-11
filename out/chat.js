@@ -54,13 +54,15 @@ const getTypos = (code) => __awaiter(void 0, void 0, void 0, function* () {
         ]
         Code:
     `;
-    const promptResult = yield exports.prompt(`
+    const promptResult = yield (0, exports.prompt)(`
         ${DESC}\n
         \`\`\`
         ${code}
         \`\`\`
     `);
-    const codeBlock = exports.getCodeBlock(promptResult);
+    console.log('codeBlock', promptResult);
+    const codeBlock = (0, exports.getCodeBlock)(promptResult);
+    console.log('codeBlock', codeBlock);
     if (codeBlock) {
         return JSON.parse(codeBlock);
     }

@@ -6,6 +6,7 @@
 
 import * as vscode from 'vscode';
 import { CODE_SMELL_MENTION, CodesmellDiagnostic } from './diagnostics';
+import * as _ from 'lodash';
 
 /**
  * Provides code actions for the commands of `vscode-code-smell-gpt.fixTypo` and
@@ -75,7 +76,7 @@ export class CodesmellCodeAction implements vscode.CodeActionProvider {
 
     diagnostic.suggestions.forEach((suggestion: string) => {
       const action = new vscode.CodeAction(
-        `Code Smell Suggest: ⤷ ${suggestion}`,
+        `Code Smell Suggest: ⤷ ${_.isEmpty(suggestion) ? 'remove code': suggestion}`,
         vscode.CodeActionKind.QuickFix,
       );
       action.command = {

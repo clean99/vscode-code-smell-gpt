@@ -1,8 +1,8 @@
 {
-  "name": "vscode-code-smell-gpt",
-  "displayName": "vscode-code-smell-gpt",
-  "description": "A grammarly extension for programming languages. Automatically review the code you write, give you suggestion, and fix errors with one click.",
-  "version": "0.6.5",
+  "name": "code-smell-gpt",
+  "displayName": "CodeSmellGPT",
+  "description": "Super Simple AI-based code review extension for programming languages. Automatically review the code you write, give you suggestion, and fix errors with one click.",
+  "version": "0.6.6",
   "icon": "images/code-smell-gpt-logo.png",
   "publisher": "clean99",
   "engines": {
@@ -18,14 +18,14 @@
   "contributes": {
     "commands": [
       {
-        "command": "vscode-code-smell-gpt.smellCheckByAll",
+        "command": "code-smell-gpt.smellCheckByAll",
         "title": "run code smell"
       }
     ],
     "configuration": {
       "title": "VSCode Code Smell",
       "properties": {
-        "vscode-code-smell-gpt.gptKey": {
+        "code-smell-gpt.gptKey": {
           "type": "string",
           "description": "Config GPT API key"
         }
