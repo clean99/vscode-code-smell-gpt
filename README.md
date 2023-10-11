@@ -30,17 +30,21 @@ CN: [哔哩哔哩: CodeSmellGPT: 一个让GPT4看着你写代码的VSCode插件�
 ### How to Install and Setup
 
 1. **Install the Extension**: Search for "Code Smell GPT" in the VSCode marketplace and click on the install button.
+
 <img src="https://github.com/clean99/vscode-code-smell-gpt/raw/HEAD/images/Install1.png" alt="install1" />
-2. **Setting Up GPT Key**:
+
+2. **Setting Up GPT Key** :
     - After installation, you'll need to configure your GPT API key.
     - Open the command palette with Ctrl + Shift + P (Cmd + Shift + P on macOS).
     - Type "Preferences: Open User Settings (JSON)" and select it.
     - Add the following config in the JSON object:
+
     ```
         {
             "vscode-code-smell-gpt.gptKey": "<Your OPEN AI API Key>"
         }
     ```
+
     - Save the settings(You may need to hit 'save' multiple times or reopen VSCode so that the icon at right-bottom corner is became ready), and you're ready to code smarter with "Code Smell GPT"!
 
 <img src="https://github.com/clean99/vscode-code-smell-gpt/raw/HEAD/images/Install2.png" alt="install2" />
