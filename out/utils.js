@@ -48,7 +48,7 @@ function setLoadedSuccess() {
 }
 exports.setLoadedSuccess = setLoadedSuccess;
 function getUserKey() {
-    return vscode.workspace.getConfiguration('vscode-code-smell-gpt').get('gptKey');
+    return vscode.workspace.getConfiguration('code-smell-gpt').get('gptKey');
 }
 exports.getUserKey = getUserKey;
 //# sourceMappingURL=utils.js.map
