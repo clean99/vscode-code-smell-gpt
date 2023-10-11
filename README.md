@@ -60,7 +60,7 @@ Your insights and contributions will be valuable in enhancing "Code Smell GPT"!
 ### Useful Links
 
 - **GitHub**: [Code Smell GPT Repository](https://github.com/clean99/vscode-code-smell-gpt)
-- **VSCode Marketplace**: [Code Smell GPT on VSCode](https://marketplace.visualstudio.com/items?itemName=YourExtensionName.CodeSmellGPT)
+- **VSCode Marketplace**: [Code Smell GPT on VSCode](https://marketplace.visualstudio.com/items?itemName=clean99.code-smell-gpt)
 - **Blog**: Explore development insights and updates on [Our Blog](https://clean99.github.io/)
 
 ### License
