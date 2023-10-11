@@ -23,12 +23,11 @@ export class DocumentsToTypos {
  * `DocumentsToTypos`.
  */
 export async function spellCheck(
-  editor: vscode.TextEditor,
+  document: vscode.TextDocument,
+  differences?: string[]
 ): Promise<void> {
-  const doc = editor.document;
-  const text = doc.getText(
-    editor.selection.isEmpty ? undefined : editor.selection,
-  );
+  const doc = document;
+  const text = differences ? differences.join('「」') : doc.getText();
 
   const typos = await getTypos(text);
 

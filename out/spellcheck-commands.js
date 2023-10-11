@@ -26,7 +26,7 @@ function spellCheckWithProgress(title) {
     }, () => __awaiter(this, void 0, void 0, function* () {
         if (editor) {
             try {
-                yield spellcheck_1.spellCheck(editor);
+                yield spellcheck_1.spellCheck(editor.document);
             }
             catch (err) {
                 vscode.window.showInformationMessage(err);

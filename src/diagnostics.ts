@@ -4,9 +4,10 @@
  */
 
 import * as vscode from 'vscode';
-import { DocumentsToTypos } from './spellcheck';
+import { DocumentsToTypos, spellCheck } from './spellcheck';
 import { CodespellTypo } from './typo';
-
+import { findDifferences } from './utils';
+import * as _ from 'lodash';
 /**
  * Used to associate diagnostic entries with code actions.
  */
@@ -99,10 +100,53 @@ export function subscribeDiagnosticsToDocumentChanges(
   context: vscode.ExtensionContext,
 ): void {
   context.subscriptions.push(codespellDiagnostics);
+  // A Map to store the last saved content of documents.
+  let lastSavedContent: Map<string, string> = new Map();
 
+  // Listen for save events
   if (vscode.window.activeTextEditor) {
     refreshDiagnostics(vscode.window.activeTextEditor.document);
+     // Retrieve the document's URI as a string to use as a key
+     let documentUri = vscode.window.activeTextEditor.document.uri.toString();
+
+     // Get the content at the time of save
+     let currentContent = vscode.window.activeTextEditor.document.getText();
+    lastSavedContent.set(documentUri, currentContent);
   }
+
+
+    let saveDisposable = vscode.workspace.onDidSaveTextDocument(async document => {
+        // Retrieve the document's URI as a string to use as a key
+        let documentUri = document.uri.toString();
+
+        // Get the content at the time of save
+        let currentContent = document.getText();
+
+        // Retrieve the last saved content from the map
+        let previousContent = lastSavedContent.get(documentUri) || "";
+
+        // Get differences between the previous content and current content
+        let differences = findDifferences(previousContent, currentContent);
+        console.log("Differences:", differences);
+        if(!_.isEmpty(differences)) {
+          await spellCheck(document, differences)
+          refreshDiagnostics(document);
+        }
+        
+        // Update the last saved content in the map
+        lastSavedContent.set(documentUri, currentContent);
+    });
+
+    let docChangeListener = vscode.workspace.onDidChangeTextDocument(() => {
+      console.log('Document Changed');
+      if(vscode.window.activeTextEditor?.document) {
+        refreshDiagnostics(vscode.window.activeTextEditor.document);
+      }
+  });
+
+
+    // Register disposable
+    context.subscriptions.push(saveDisposable, docChangeListener);
 
   context.subscriptions.push(
     vscode.window.onDidChangeActiveTextEditor((editor) => {
@@ -113,14 +157,9 @@ export function subscribeDiagnosticsToDocumentChanges(
   );
 
   context.subscriptions.push(
-    vscode.workspace.onDidChangeTextDocument((editor) =>
-      refreshDiagnostics(editor.document),
-    ),
-  );
-
-  context.subscriptions.push(
     vscode.workspace.onDidCloseTextDocument((doc) =>
       codespellDiagnostics.delete(doc.uri),
     ),
   );
+  
 }

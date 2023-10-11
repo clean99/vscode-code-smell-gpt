@@ -26,10 +26,10 @@ DocumentsToTypos.setTypos = (doc, typos) => DocumentsToTypos.docs2typos.set(doc,
  * Spell checks given document, makes `CodespellTypo[]`, and sets them to
  * `DocumentsToTypos`.
  */
-function spellCheck(editor) {
+function spellCheck(document, differences) {
     return __awaiter(this, void 0, void 0, function* () {
-        const doc = editor.document;
-        const text = doc.getText(editor.selection.isEmpty ? undefined : editor.selection);
+        const doc = document;
+        const text = differences ? differences.join('「」') : doc.getText();
         const typos = yield chat_1.getTypos(text);
         DocumentsToTypos.setTypos(doc, typos);
     });

@@ -23,7 +23,7 @@ function spellCheckWithProgress(
     async () => {
       if (editor) {
         try {
-          await spellCheck(editor);
+          await spellCheck(editor.document);
         } catch (err: any) {
           vscode.window.showInformationMessage(err);
         }

@@ -75,12 +75,12 @@ export class CodespellCodeAction implements vscode.CodeActionProvider {
 
     diagnostic.suggestions.forEach((suggestion: string) => {
       const action = new vscode.CodeAction(
-        `⤷ ${suggestion}`,
+        `Code Spell Suggest: ⤷ ${suggestion}`,
         vscode.CodeActionKind.QuickFix,
       );
       action.command = {
         command: 'vscode-codespell.fixTypo',
-        title: 'Fix a typo',
+        title: 'Fix it',
         arguments: [
           {
             document,

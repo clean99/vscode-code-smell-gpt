@@ -38,6 +38,7 @@ const getTypos = (code) => __awaiter(void 0, void 0, void 0, function* () {
     const DESC = `
         You are an expert at software engineering,
         review my code below and ensure it is following the best practices, and more maintainable.
+        code before Placeholder「」and after are separated code block.
         return a JSON array for me to match and replace,
         only return a JSON array as below, don't modify code unless it is necessary, keep info short and precise.
         Add \`\`\` at the start and end of json:
@@ -45,9 +46,9 @@ const getTypos = (code) => __awaiter(void 0, void 0, void 0, function* () {
                 {
                     // The code that need change. Don't change code here even spaces, as this value will be used to match the original text
                     token: string;
-                    // Suggestions for fixing&refactoring existing code. At most 3 suggestions. If the suggestion is to delete, use empty string ''
+                    // Suggestions **code** for replacing existing code. At least 1 and most 3 suggestions. If the suggestion is to delete, use empty string ''
                     suggestions: string[];
-                    // Short description
+                    // Short description about the changes
                     info: string;
                 }
             ]

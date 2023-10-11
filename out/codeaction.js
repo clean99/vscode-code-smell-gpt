@@ -41,10 +41,10 @@ class CodespellCodeAction {
     createFixTypoCommandCodeActions(diagnostic, document) {
         const actions = [];
         diagnostic.suggestions.forEach((suggestion) => {
-            const action = new vscode.CodeAction(`⤷ ${suggestion}`, vscode.CodeActionKind.QuickFix);
+            const action = new vscode.CodeAction(`Code Spell Suggest: ⤷ ${suggestion}`, vscode.CodeActionKind.QuickFix);
             action.command = {
                 command: 'vscode-codespell.fixTypo',
-                title: 'Fix a typo',
+                title: 'Fix it',
                 arguments: [
                     {
                         document,

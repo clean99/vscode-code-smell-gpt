@@ -3,10 +3,21 @@
  * Defines diagnostic data structure containing a typo for a range of a
  * document.
  */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.subscribeDiagnosticsToDocumentChanges = exports.CodespellDiagnostic = exports.refreshDiagnostics = exports.escapeRegExp = exports.getCodespellDiagnostics = exports.CODE_SPELL_MENTION = void 0;
 const vscode = require("vscode");
 const spellcheck_1 = require("./spellcheck");
+const utils_1 = require("./utils");
+const _ = require("lodash");
 /**
  * Used to associate diagnostic entries with code actions.
  */
@@ -69,15 +80,48 @@ exports.CodespellDiagnostic = CodespellDiagnostic;
 /** Subscribes `refreshDiagnostics` to documents change events. */
 function subscribeDiagnosticsToDocumentChanges(context) {
     context.subscriptions.push(codespellDiagnostics);
+    // A Map to store the last saved content of documents.
+    let lastSavedContent = new Map();
+    // Listen for save events
     if (vscode.window.activeTextEditor) {
         refreshDiagnostics(vscode.window.activeTextEditor.document);
+        // Retrieve the document's URI as a string to use as a key
+        let documentUri = vscode.window.activeTextEditor.document.uri.toString();
+        // Get the content at the time of save
+        let currentContent = vscode.window.activeTextEditor.document.getText();
+        lastSavedContent.set(documentUri, currentContent);
     }
+    let saveDisposable = vscode.workspace.onDidSaveTextDocument((document) => __awaiter(this, void 0, void 0, function* () {
+        // Retrieve the document's URI as a string to use as a key
+        let documentUri = document.uri.toString();
+        // Get the content at the time of save
+        let currentContent = document.getText();
+        // Retrieve the last saved content from the map
+        let previousContent = lastSavedContent.get(documentUri) || "";
+        // Get differences between the previous content and current content
+        let differences = utils_1.findDifferences(previousContent, currentContent);
+        console.log("Differences:", differences);
+        if (!_.isEmpty(differences)) {
+            yield spellcheck_1.spellCheck(document, differences);
+            refreshDiagnostics(document);
+        }
+        // Update the last saved content in the map
+        lastSavedContent.set(documentUri, currentContent);
+    }));
+    let docChangeListener = vscode.workspace.onDidChangeTextDocument(() => {
+        var _a;
+        console.log('Document Changed');
+        if ((_a = vscode.window.activeTextEditor) === null || _a === void 0 ? void 0 : _a.document) {
+            refreshDiagnostics(vscode.window.activeTextEditor.document);
+        }
+    });
+    // Register disposable
+    context.subscriptions.push(saveDisposable, docChangeListener);
     context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor((editor) => {
         if (editor) {
             refreshDiagnostics(editor.document);
         }
     }));
-    context.subscriptions.push(vscode.workspace.onDidChangeTextDocument((editor) => refreshDiagnostics(editor.document)));
     context.subscriptions.push(vscode.workspace.onDidCloseTextDocument((doc) => codespellDiagnostics.delete(doc.uri)));
 }
 exports.subscribeDiagnosticsToDocumentChanges = subscribeDiagnosticsToDocumentChanges;
