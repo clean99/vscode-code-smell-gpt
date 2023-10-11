@@ -6,7 +6,7 @@
     "outDir": "out",
     "skipLibCheck": true,
     "lib": [
-      "es6"
+      "es2020", "dom"
     ],
     "sourceMap": true,
     "rootDir": "src",
@@ -15,5 +15,6 @@
   "exclude": [
     "node_modules",
     ".vscode-test"
-  ]
+  ],
+  "include": ["src/**/*"]
 }

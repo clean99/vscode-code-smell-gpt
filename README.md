@@ -1,6 +1,6 @@
 ## Code Smell GPT: Your Smart Code Reviewer and Refactorer
 
-![logo](https://github.com/clean99/vscode-code-smell-gpt/blob/main/images/code-smell-gpt-logo.png)
+<img src="https://github.com/clean99/vscode-code-smell-gpt/blob/main/images/code-smell-gpt-logo.png" alt="logo" width="200" height="200" />
 
 🚀 Elevate your coding experience with automated, AI-driven code reviews and refactor suggestions directly in your VSCode!
 
