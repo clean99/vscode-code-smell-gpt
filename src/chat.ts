@@ -1,5 +1,6 @@
 import OpenAI from "openai";
 import { CodesmellTypo } from "./typo";
+import { setConfigError } from "./utils";
 
 let openai: OpenAI;
 
@@ -45,17 +46,21 @@ export const getTypos = async (code: string): Promise<CodesmellTypo[]>  => {
         ]
         Code:
     `;
-    const promptResult = await prompt(`
+    try {
+        const promptResult = await prompt(`
         ${DESC}\n
         \`\`\`
         ${code}
         \`\`\`
-    `);
-    const codeBlock = getCodeBlock(promptResult);
-    if (codeBlock) {
-    return JSON.parse(codeBlock);
+        `);
+        const codeBlock = getCodeBlock(promptResult);
+        if (codeBlock) {
+        return JSON.parse(codeBlock);
+        }
+    } catch(e: any) {
+        setConfigError(e?.message);
+    } finally {
+        // @ts-ignore
+        return [];
     }
-
-    // @ts-ignore
-    return [];
 };

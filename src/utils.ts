@@ -40,12 +40,11 @@ export function setInitLoading() {
     myStatusBarItem.tooltip = "I'm loading, please wait...";
 }
 
-export function setConfigError() {
+export function setConfigError(message?: string) {
+    const UNKNOWN_ERROR = 'Unknown error, please raise an issue in github: https://github.com/clean99/vscode-code-smell-gpt/issues';
     myStatusBarItem.text = "$(error) Code Smell GPT";  // Using a built-in icon
-    myStatusBarItem.tooltip = "Code Smell GPT: Please config your gpt key first! XD \nFollow Instruction: https://github.com/clean99/vscode-code-smell-gpt/blob/main/README.md";
-    vscode.window.showInformationMessage(
-      `Code Smell GPT: Please config your gpt key first! XD \nFollow Instruction: https://github.com/clean99/vscode-code-smell-gpt/blob/main/README.md`,
-    );
+    myStatusBarItem.tooltip = message ?? UNKNOWN_ERROR;
+    vscode.window.showErrorMessage(message ?? UNKNOWN_ERROR);
 }
 
 export function setLoadedSuccess() {

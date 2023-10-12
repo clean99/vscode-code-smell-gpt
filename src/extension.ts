@@ -27,7 +27,7 @@ export function activate(context: vscode.ExtensionContext) {
     initChat(userGPTKey);
     setLoadedSuccess();
   } else {
-    setConfigError();
+    setConfigError(`Code Smell GPT: Please config your gpt key first! XD \nFollow Instruction: https://github.com/clean99/vscode-code-smell-gpt/blob/main/README.md`,);
     registerUserKey();
   }
   
