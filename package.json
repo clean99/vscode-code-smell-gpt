@@ -2,7 +2,7 @@
   "name": "code-smell-gpt",
   "displayName": "CodeSmellGPT",
   "description": "Super Simple AI-based code review extension for programming languages. Automatically review the code you write, give you suggestion, and fix errors with one click.",
-  "version": "0.8.8",
+  "version": "0.8.9",
   "icon": "images/code-smell-gpt-logo.png",
   "publisher": "clean99",
   "engines": {

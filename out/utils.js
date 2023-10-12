@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.reachToken = exports.registerUserKey = exports.getUserKey = exports.setLoadedSuccess = exports.setConfigError = exports.setInitLoading = exports.setSpinning = exports.findDifferences = exports.extractAddedLines = void 0;
+exports.reachToken = exports.registerUserKey = exports.getUserKey = exports.setLoadedSuccess = exports.isConfigError = exports.setConfigError = exports.setInitLoading = exports.setSpinning = exports.findDifferences = exports.extractAddedLines = void 0;
 const Diff = require("diff");
 const _ = require("lodash");
 const vscode = require("vscode");
@@ -49,6 +49,10 @@ function setConfigError(message) {
     vscode.window.showErrorMessage(message !== null && message !== void 0 ? message : UNKNOWN_ERROR);
 }
 exports.setConfigError = setConfigError;
+function isConfigError() {
+    return extension_1.myStatusBarItem.text === "$(error) Code Smell GPT";
+}
+exports.isConfigError = isConfigError;
 function setLoadedSuccess() {
     extension_1.myStatusBarItem.text = "$(smiley) Code Smell GPT"; // Using a built-in icon
     extension_1.myStatusBarItem.tooltip = "I'm ready. Happy coding with Code Smell GPT! :)";
@@ -62,7 +66,9 @@ function registerUserKey() {
     const newUserGPTKey = getUserKey();
     if (newUserGPTKey) {
         (0, chat_1.initChat)(newUserGPTKey);
-        setLoadedSuccess();
+        if (isConfigError()) {
+            setLoadedSuccess();
+        }
     }
 }
 exports.registerUserKey = registerUserKey;

@@ -47,6 +47,10 @@ export function setConfigError(message?: string) {
     vscode.window.showErrorMessage(message ?? UNKNOWN_ERROR);
 }
 
+export function isConfigError(): boolean {
+    return myStatusBarItem.text === "$(error) Code Smell GPT";
+}
+
 export function setLoadedSuccess() {
     myStatusBarItem.text = "$(smiley) Code Smell GPT";  // Using a built-in icon
     myStatusBarItem.tooltip = "I'm ready. Happy coding with Code Smell GPT! :)";
@@ -60,7 +64,9 @@ export function registerUserKey() {
     const newUserGPTKey = getUserKey();
     if(newUserGPTKey) {
         initChat(newUserGPTKey);
-        setLoadedSuccess();
+        if(isConfigError()) {
+            setLoadedSuccess();
+        }
     }
 }
 
