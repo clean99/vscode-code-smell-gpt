@@ -83,7 +83,7 @@ exports.CodesmellDiagnostic = CodesmellDiagnostic;
 function subscribeDiagnosticsToDocumentChanges(context) {
     context.subscriptions.push(CodesmellDiagnostics);
     // A Map to store the last saved content of documents.
-    let lastSavedContent = new Map();
+    const lastSavedContent = new Map();
     // Listen for save events
     if (vscode.window.activeTextEditor) {
         refreshDiagnostics(vscode.window.activeTextEditor.document);
@@ -94,25 +94,23 @@ function subscribeDiagnosticsToDocumentChanges(context) {
         lastSavedContent.set(documentUri, currentContent);
     }
     let saveDisposable = vscode.workspace.onDidSaveTextDocument((document) => __awaiter(this, void 0, void 0, function* () {
-        console.log('test');
         (0, utils_1.registerUserKey)();
         // Retrieve the document's URI as a string to use as a key
-        let documentUri = document.uri.toString();
+        const documentUri = document.uri.toString();
         // Get the content at the time of save
-        let currentContent = document.getText();
+        const currentContent = document.getText();
         // Retrieve the last saved content from the map
-        let previousContent = lastSavedContent.get(documentUri) || "";
-        // Update the last saved content in the map
-        lastSavedContent.set(documentUri, currentContent);
+        const previousContent = lastSavedContent.get(documentUri) || "";
         // Get differences between the previous content and current content
-        let differences = (0, utils_1.findDifferences)(previousContent, currentContent);
-        console.log('differences', differences);
+        const differences = (0, utils_1.findDifferences)(previousContent, currentContent);
         if (!_.isEmpty(differences)) {
+            // Update the last saved content in the map
+            lastSavedContent.set(documentUri, currentContent);
             yield (0, spellcheck_1.spellCheck)(document, differences);
             refreshDiagnostics(document);
         }
     }));
-    let docChangeListener = vscode.workspace.onDidChangeTextDocument(() => {
+    const docChangeListener = vscode.workspace.onDidChangeTextDocument(() => {
         var _a;
         if ((_a = vscode.window.activeTextEditor) === null || _a === void 0 ? void 0 : _a.document) {
             refreshDiagnostics(vscode.window.activeTextEditor.document);

@@ -23,7 +23,7 @@ function activate(context) {
         (0, utils_1.setLoadedSuccess)();
     }
     else {
-        (0, utils_1.setConfigError)();
+        (0, utils_1.setConfigError)(`Code Smell GPT: Please config your gpt key first! XD \nFollow Instruction: https://github.com/clean99/vscode-code-smell-gpt/blob/main/README.md`);
         (0, utils_1.registerUserKey)();
     }
     // Subscribes `refreshDiagnostics` to documents change events.

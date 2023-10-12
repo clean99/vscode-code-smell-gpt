@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getTypos = exports.getCodeBlock = exports.prompt = exports.initChat = void 0;
 const openai_1 = require("openai");
+const utils_1 = require("./utils");
 let openai;
 const initChat = (apiKey) => {
     openai = new openai_1.default({
@@ -37,35 +38,40 @@ exports.getCodeBlock = getCodeBlock;
 const getTypos = (code) => __awaiter(void 0, void 0, void 0, function* () {
     const DESC = `
         You are an expert at software engineering,
-        review my code below and ensure highlighting potential bugs, improving readability, making code cleaner.
-        The code snippets you receive may be **incomplete**, code from different places are consolidated and use placeholder '「」' to mark them.
-        return a JSON array for me to match and replace,
-        only return a JSON array as below, don't modify code unless it is necessary, keep info short and precise.
-        Add \`\`\` at the start and end of json:
+        review my code below and highlight potential bugs, readability, code cleaning issues.
+        The code snippets you receive may be **incomplete**, code from different places are consolidated and use placeholder '~' as a mark. Don't make assumption for unknown code.
+        **only** return a JSON array as below, don't modify code unless it is necessary, keep changes and info short and precise. Add \`\`\` at the start and end of json:
         [
             {
-                // The code that need change. Don't change code here even spaces, as it be used to match the original text
+                // The code that need be changed. Don't modify any code here even just spaces, as it is used to match the original text
                 token: string;
-                // Suggestion **code** for replacing existing code. If the suggestion is to delete, use empty string ''
+                // Suggested **code** for replacing existing code. Use empty string '' to represent delete original code.
                 suggestion: string;
-                // Short description about the changes
+                // Short description about the change
                 info: string;
             }
         ]
         Code:
     `;
-    const promptResult = yield (0, exports.prompt)(`
+    try {
+        const promptResult = yield (0, exports.prompt)(`
         ${DESC}\n
         \`\`\`
         ${code}
         \`\`\`
-    `);
-    const codeBlock = (0, exports.getCodeBlock)(promptResult);
-    if (codeBlock) {
-        return JSON.parse(codeBlock);
+        `);
+        const codeBlock = (0, exports.getCodeBlock)(promptResult);
+        if (codeBlock) {
+            return JSON.parse(codeBlock);
+        }
     }
-    // @ts-ignore
-    return [];
+    catch (e) {
+        (0, utils_1.setConfigError)(e === null || e === void 0 ? void 0 : e.message);
+    }
+    finally {
+        // @ts-ignore
+        return [];
+    }
 });
 exports.getTypos = getTypos;
 //# sourceMappingURL=chat.js.map
