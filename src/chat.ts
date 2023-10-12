@@ -11,6 +11,7 @@ export const initChat = (apiKey: string) => {
 };
 
 export const prompt = async (content: string) => {
+    if(!openai) return;
     const chatCompletion = await openai.chat.completions.create({
         messages: [{ role: "user", content }],
         model: "gpt-4",
@@ -25,26 +26,26 @@ export const prompt = async (content: string) => {
 * @returns {string}
 */
 export const getCodeBlock = (text: string): string | null =>
- /```[\s\S]*?\n([\s\S]*?)\n```/.exec(text)?.[1].trim() ?? null;
+ /```[\s\S]*?\n([\s\S]*?)\n```/.exec(text)?.[1].trim() ?? text;
 
 
 export const getTypos = async (code: string): Promise<CodesmellTypo[]>  => {
     const DESC = `
-        You are an expert at software engineering,
-        review my code below and highlight potential bugs, readability, code cleaning issues.
-        The code snippets you receive may be **incomplete**, code from different places are consolidated and use placeholder '~' as a mark. Don't make assumption for unknown code.
-        **only** return a JSON array as below, don't modify code unless it is necessary, keep changes and info short and precise. Add \`\`\` at the start and end of json:
-        [
-            {
-                // The code that need be changed. Don't modify any code here even just spaces, as it is used to match the original text
-                token: string;
-                // Suggested **code** for replacing existing code. Use empty string '' to represent delete original code.
-                suggestion: string;
-                // Short description about the change
-                info: string;
-            }
-        ]
-        Code:
+    You are an expert at software engineering,
+    review my code below and highlight potential bugs, readability, code cleaning issues.
+    The code snippets you receive may be **incomplete**, code from different places are consolidated and use placeholder '~' as a mark. Don't make assumption for unknown code(Eg. assume that never use).
+    **only** return a JSON array as below, don't modify code unless it is necessary, keep changes and info short and precise. Add \`\`\` at the start and end of json:
+    [
+        {
+            // The code that need be changed. Don't modify any code here even just spaces, as it is used to match the original text
+            token: string;
+            // Suggested **code** for replacing existing code. Use empty string '' to represent delete original code.
+            suggestion: string;
+            // Short description about the change
+            info: string;
+        }
+    ]
+    Code:
     `;
     try {
         const promptResult = await prompt(`
@@ -54,13 +55,13 @@ export const getTypos = async (code: string): Promise<CodesmellTypo[]>  => {
         \`\`\`
         `);
         const codeBlock = getCodeBlock(promptResult);
+
         if (codeBlock) {
         return JSON.parse(codeBlock);
         }
+        return [];
     } catch(e: any) {
         setConfigError(e?.message);
-    } finally {
-        // @ts-ignore
         return [];
     }
 };

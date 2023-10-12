@@ -21,6 +21,8 @@ const initChat = (apiKey) => {
 exports.initChat = initChat;
 const prompt = (content) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
+    if (!openai)
+        return;
     const chatCompletion = yield openai.chat.completions.create({
         messages: [{ role: "user", content }],
         model: "gpt-4",
@@ -33,25 +35,25 @@ exports.prompt = prompt;
 * @param text
 * @returns {string}
 */
-const getCodeBlock = (text) => { var _a, _b; return (_b = (_a = /```[\s\S]*?\n([\s\S]*?)\n```/.exec(text)) === null || _a === void 0 ? void 0 : _a[1].trim()) !== null && _b !== void 0 ? _b : null; };
+const getCodeBlock = (text) => { var _a, _b; return (_b = (_a = /```[\s\S]*?\n([\s\S]*?)\n```/.exec(text)) === null || _a === void 0 ? void 0 : _a[1].trim()) !== null && _b !== void 0 ? _b : text; };
 exports.getCodeBlock = getCodeBlock;
 const getTypos = (code) => __awaiter(void 0, void 0, void 0, function* () {
     const DESC = `
-        You are an expert at software engineering,
-        review my code below and highlight potential bugs, readability, code cleaning issues.
-        The code snippets you receive may be **incomplete**, code from different places are consolidated and use placeholder '~' as a mark. Don't make assumption for unknown code.
-        **only** return a JSON array as below, don't modify code unless it is necessary, keep changes and info short and precise. Add \`\`\` at the start and end of json:
-        [
-            {
-                // The code that need be changed. Don't modify any code here even just spaces, as it is used to match the original text
-                token: string;
-                // Suggested **code** for replacing existing code. Use empty string '' to represent delete original code.
-                suggestion: string;
-                // Short description about the change
-                info: string;
-            }
-        ]
-        Code:
+    You are an expert at software engineering,
+    review my code below and highlight potential bugs, readability, code cleaning issues.
+    The code snippets you receive may be **incomplete**, code from different places are consolidated and use placeholder '~' as a mark. Don't make assumption for unknown code(Eg. assume that never use).
+    **only** return a JSON array as below, don't modify code unless it is necessary, keep changes and info short and precise. Add \`\`\` at the start and end of json:
+    [
+        {
+            // The code that need be changed. Don't modify any code here even just spaces, as it is used to match the original text
+            token: string;
+            // Suggested **code** for replacing existing code. Use empty string '' to represent delete original code.
+            suggestion: string;
+            // Short description about the change
+            info: string;
+        }
+    ]
+    Code:
     `;
     try {
         const promptResult = yield (0, exports.prompt)(`
@@ -64,12 +66,10 @@ const getTypos = (code) => __awaiter(void 0, void 0, void 0, function* () {
         if (codeBlock) {
             return JSON.parse(codeBlock);
         }
+        return [];
     }
     catch (e) {
         (0, utils_1.setConfigError)(e === null || e === void 0 ? void 0 : e.message);
-    }
-    finally {
-        // @ts-ignore
         return [];
     }
 });
