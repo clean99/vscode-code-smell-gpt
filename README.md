@@ -55,10 +55,10 @@ CN: [哔哩哔哩: CodeSmellGPT: 一个让GPT4看着你写代码的VSCode插件�
 ### Todo List
 
 1. Further reduce token usage
-    - reduce prompt size
-    - batch request gpt
+    - reduce prompt size ✅
+    - batch request gpt ✅
     - test in gpt-3.5
-2. Better error handling(GPT Key Validation)
+2. Better error handling(GPT Key Validation) ✅
 3. Configuration(GPT model, files exclusion)
 
 ### How to Contribute
