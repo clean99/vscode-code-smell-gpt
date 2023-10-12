@@ -30,7 +30,7 @@ export async function spellCheck(
   setSpinning();
   try{
     const doc = document;
-    const text = differences ? differences.join('「」') : doc.getText();
+    const text = differences ? differences.join('~') : doc.getText();
     const typos = await getTypos(text);
     const previousTypos = DocumentsToTypos.getTypos(doc) ?? [];
     DocumentsToTypos.setTypos(doc, [...previousTypos, ...typos]);

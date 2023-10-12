@@ -33,7 +33,7 @@ function spellCheck(document, differences) {
         (0, utils_1.setSpinning)();
         try {
             const doc = document;
-            const text = differences ? differences.join('「」') : doc.getText();
+            const text = differences ? differences.join('~') : doc.getText();
             const typos = yield (0, chat_1.getTypos)(text);
             const previousTypos = (_a = DocumentsToTypos.getTypos(doc)) !== null && _a !== void 0 ? _a : [];
             DocumentsToTypos.setTypos(doc, [...previousTypos, ...typos]);

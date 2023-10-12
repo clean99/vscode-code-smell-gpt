@@ -42,7 +42,8 @@ const getTypos = (code) => __awaiter(void 0, void 0, void 0, function* () {
     You are an expert at software engineering,
     review my code below and highlight potential bugs, readability, code cleaning issues.
     The code snippets you receive may be **incomplete**, code from different places are consolidated and use placeholder '~' as a mark. Don't make assumption for unknown code(Eg. assume that never use).
-    **only** return a JSON array as below, don't modify code unless it is necessary, keep changes and info short and precise. Add \`\`\` at the start and end of json:
+    Consolidate code change if they are continuous,
+    **only** return a JSON array as below, don't modify code unless it is necessary, keep changes and info short and precise.:
     [
         {
             // The code that need be changed. Don't modify any code here even just spaces, as it is used to match the original text
