@@ -98,7 +98,7 @@ export function subscribeDiagnosticsToDocumentChanges(
 ): void {
   context.subscriptions.push(CodesmellDiagnostics);
   // A Map to store the last saved content of documents.
-  let lastSavedContent: Map<string, string> = new Map();
+  const lastSavedContent: Map<string, string> = new Map();
 
   // Listen for save events
   if (vscode.window.activeTextEditor) {
@@ -112,31 +112,29 @@ export function subscribeDiagnosticsToDocumentChanges(
 
 
     let saveDisposable = vscode.workspace.onDidSaveTextDocument(async document => {
-      console.log('test');
         registerUserKey();
         // Retrieve the document's URI as a string to use as a key
-        let documentUri = document.uri.toString();
+        const documentUri = document.uri.toString();
 
         // Get the content at the time of save
-        let currentContent = document.getText();
+        const currentContent = document.getText();
 
         // Retrieve the last saved content from the map
-        let previousContent = lastSavedContent.get(documentUri) || "";
-
-        // Update the last saved content in the map
-        lastSavedContent.set(documentUri, currentContent);
+        const previousContent = lastSavedContent.get(documentUri) || "";
 
         // Get differences between the previous content and current content
-        let differences = findDifferences(previousContent, currentContent);
-        console.log('differences', differences);
+        const differences = findDifferences(previousContent, currentContent);
         if(!_.isEmpty(differences)) {
+          // Update the last saved content in the map
+          lastSavedContent.set(documentUri, currentContent);
+
           await spellCheck(document, differences)
           refreshDiagnostics(document);
         }
     });
     
 
-    let docChangeListener = vscode.workspace.onDidChangeTextDocument(() => {
+    const docChangeListener = vscode.workspace.onDidChangeTextDocument(() => {
       if(vscode.window.activeTextEditor?.document) {
         refreshDiagnostics(vscode.window.activeTextEditor.document);
       }

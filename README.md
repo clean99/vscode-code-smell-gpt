@@ -9,11 +9,12 @@
 Code Smell GPT is an innovative VSCode extension designed to be your intelligent coding companion, helping you to write cleaner, more efficient, and maintainable code. It utilizes the power of GPT to review and refactor your code in real-time, providing you with smart, context-aware suggestions for improving code quality across various programming languages.
 
 ### Features
-- 🤖 **Increment Review**: CodeSmellGPT only review the code you have changed, which means it will not review the whole file, but only the changed part.(It will review whole file when you first save though.)
 - 🧠 **Intelligent Code Suggestions**: Real-time code review and refactor suggestions as you type.
 - 🔄 **One-Click Refactor**: Easily accept suggested refactorings with a single click.
 - 📚 **Supports Multiple Languages**: Versatile code review for your favorite programming languages.
-- 🛡️ **Privacy Focused**: Your code is yours! We prioritize your data privacy and security.
+- 💰 **Save Your Token**: Many people worry about whether this plugin will spend a huge amount of tokens, I introduce several mechanism for preventing so:
+    - 🤖 **Increment Review**: CodeSmellGPT **only review the code you have changed**, which means it will not review the whole file, but only the changed part.(It will review whole file when you first save though.)
+    - 🚃 **Batch Request**: CodeSmellGPT will **accumulate code change until more than 30 words to review**, preventing sending too many code fragments to gpt.
 
 ### Demos
 
@@ -50,6 +51,15 @@ CN: [哔哩哔哩: CodeSmellGPT: 一个让GPT4看着你写代码的VSCode插件�
 <img src="https://github.com/clean99/vscode-code-smell-gpt/raw/HEAD/images/Install2.png" alt="install2" />
 
 <img src="https://github.com/clean99/vscode-code-smell-gpt/raw/HEAD/images/Install3.png" alt="install3" />
+
+### Todo List
+
+1. Further reduce token usage
+    - reduce prompt size
+    - batch request gpt
+    - test in gpt-3.5
+2. Better error handling(GPT Key Validation)
+3. Configuration(GPT model, files exclusion)
 
 ### How to Contribute
 

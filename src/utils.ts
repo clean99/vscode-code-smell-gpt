@@ -19,8 +19,13 @@ export function findDifferences(code1: string, code2: string): string[] {
     // Generate the diff
     const diff = Diff.createPatch('code', code1, code2);
     const addedLines = extractAddedLines(diff);
-    // Return the formatted diff
-    return addedLines;
+    const lines = addedLines.join(' ');
+    if(reachToken(lines)) {
+        // Return the formatted diff
+        return addedLines;
+    }
+    // Don't do anything if it doesn't reach threshold
+    return [];
 }
 
 export function setSpinning() {
@@ -58,4 +63,8 @@ export function registerUserKey() {
         initChat(newUserGPTKey);
         setLoadedSuccess();
     }
+}
+
+export function reachToken(code: string, token: number = 20): boolean {
+    return code.split('\n').reduce((res: string[], str) => ([...res, ...str.split(' ')]), []).filter(str => !_.isEmpty(str)).length > token;
 }
