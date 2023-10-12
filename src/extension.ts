@@ -12,7 +12,7 @@ import {
   subscribeDiagnosticsToDocumentChanges
 } from './diagnostics';
 import { initChat } from './chat';
-import { getUserKey, setConfigError, setInitLoading, setLoadedSuccess } from './utils';
+import { getUserKey, registerUserKey, setConfigError, setInitLoading, setLoadedSuccess } from './utils';
 
 export const myStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
 
@@ -20,27 +20,15 @@ export const myStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBa
 export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(myStatusBarItem);
   const userGPTKey = getUserKey();
-  setInitLoading();
   myStatusBarItem.show();
+  setInitLoading();
 
   if(userGPTKey) {
     initChat(userGPTKey);
     setLoadedSuccess();
   } else {
     setConfigError();
-    const checkAPIKey = vscode.workspace.onDidSaveTextDocument(async document => {
-      const newUserGPTKey = getUserKey();
-      if(newUserGPTKey) {
-        initChat(newUserGPTKey);
-        checkAPIKey.dispose();
-        setLoadedSuccess();
-      }
-    });
-  
-  
-    // Register disposable
-    context.subscriptions.push(checkAPIKey);
-    return;
+    registerUserKey();
   }
   
   

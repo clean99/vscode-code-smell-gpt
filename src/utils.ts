@@ -2,6 +2,7 @@ import * as Diff from 'diff';
 import * as _ from 'lodash';
 import * as vscode from 'vscode';
 import { myStatusBarItem } from './extension';
+import { initChat } from './chat';
 
 export function extractAddedLines(diff: string): string[] {
     // Split the diff into lines and filter for added code
@@ -48,5 +49,13 @@ export function setLoadedSuccess() {
 }
 
 export function getUserKey() {
-    return vscode.workspace.getConfiguration('code-smell-gpt').get<string>('gptKey');
+    return vscode.workspace.getConfiguration('vscode-code-smell-gpt').get<string>('gptKey');
+}
+
+export function registerUserKey() {
+    const newUserGPTKey = getUserKey();
+    if(newUserGPTKey) {
+        initChat(newUserGPTKey);
+        setLoadedSuccess();
+    }
 }

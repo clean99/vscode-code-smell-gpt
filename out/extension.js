@@ -3,15 +3,6 @@
  * Defines the functions for the code action commands, and registers all the
  * commands and `refreshDiagnostics`.
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.activate = exports.myStatusBarItem = void 0;
 const vscode = require("vscode");
@@ -25,25 +16,15 @@ exports.myStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlig
 function activate(context) {
     context.subscriptions.push(exports.myStatusBarItem);
     const userGPTKey = (0, utils_1.getUserKey)();
-    (0, utils_1.setInitLoading)();
     exports.myStatusBarItem.show();
+    (0, utils_1.setInitLoading)();
     if (userGPTKey) {
         (0, chat_1.initChat)(userGPTKey);
         (0, utils_1.setLoadedSuccess)();
     }
     else {
         (0, utils_1.setConfigError)();
-        const checkAPIKey = vscode.workspace.onDidSaveTextDocument((document) => __awaiter(this, void 0, void 0, function* () {
-            const newUserGPTKey = (0, utils_1.getUserKey)();
-            if (newUserGPTKey) {
-                (0, chat_1.initChat)(newUserGPTKey);
-                checkAPIKey.dispose();
-                (0, utils_1.setLoadedSuccess)();
-            }
-        }));
-        // Register disposable
-        context.subscriptions.push(checkAPIKey);
-        return;
+        (0, utils_1.registerUserKey)();
     }
     // Subscribes `refreshDiagnostics` to documents change events.
     (0, diagnostics_1.subscribeDiagnosticsToDocumentChanges)(context);

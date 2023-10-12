@@ -1,10 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUserKey = exports.setLoadedSuccess = exports.setConfigError = exports.setInitLoading = exports.setSpinning = exports.findDifferences = exports.extractAddedLines = void 0;
+exports.registerUserKey = exports.getUserKey = exports.setLoadedSuccess = exports.setConfigError = exports.setInitLoading = exports.setSpinning = exports.findDifferences = exports.extractAddedLines = void 0;
 const Diff = require("diff");
 const _ = require("lodash");
 const vscode = require("vscode");
 const extension_1 = require("./extension");
+const chat_1 = require("./chat");
 function extractAddedLines(diff) {
     // Split the diff into lines and filter for added code
     return diff
@@ -48,7 +49,15 @@ function setLoadedSuccess() {
 }
 exports.setLoadedSuccess = setLoadedSuccess;
 function getUserKey() {
-    return vscode.workspace.getConfiguration('code-smell-gpt').get('gptKey');
+    return vscode.workspace.getConfiguration('vscode-code-smell-gpt').get('gptKey');
 }
 exports.getUserKey = getUserKey;
+function registerUserKey() {
+    const newUserGPTKey = getUserKey();
+    if (newUserGPTKey) {
+        (0, chat_1.initChat)(newUserGPTKey);
+        setLoadedSuccess();
+    }
+}
+exports.registerUserKey = registerUserKey;
 //# sourceMappingURL=utils.js.map

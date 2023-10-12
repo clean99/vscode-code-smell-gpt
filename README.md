@@ -41,7 +41,7 @@ CN: [哔哩哔哩: CodeSmellGPT: 一个让GPT4看着你写代码的VSCode插件�
 
     ```
         {
-            "code-smell-gpt.gptKey": "<Your OPEN AI API Key>"
+            "vscode-code-smell-gpt.gptKey": "<Your OPEN AI API Key>"
         }
     ```
 

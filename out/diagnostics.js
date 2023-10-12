@@ -94,20 +94,23 @@ function subscribeDiagnosticsToDocumentChanges(context) {
         lastSavedContent.set(documentUri, currentContent);
     }
     let saveDisposable = vscode.workspace.onDidSaveTextDocument((document) => __awaiter(this, void 0, void 0, function* () {
+        console.log('test');
+        (0, utils_1.registerUserKey)();
         // Retrieve the document's URI as a string to use as a key
         let documentUri = document.uri.toString();
         // Get the content at the time of save
         let currentContent = document.getText();
         // Retrieve the last saved content from the map
         let previousContent = lastSavedContent.get(documentUri) || "";
+        // Update the last saved content in the map
+        lastSavedContent.set(documentUri, currentContent);
         // Get differences between the previous content and current content
         let differences = (0, utils_1.findDifferences)(previousContent, currentContent);
+        console.log('differences', differences);
         if (!_.isEmpty(differences)) {
             yield (0, spellcheck_1.spellCheck)(document, differences);
             refreshDiagnostics(document);
         }
-        // Update the last saved content in the map
-        lastSavedContent.set(documentUri, currentContent);
     }));
     let docChangeListener = vscode.workspace.onDidChangeTextDocument(() => {
         var _a;

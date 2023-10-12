@@ -6,7 +6,7 @@
 import * as vscode from 'vscode';
 import { DocumentsToTypos, spellCheck } from './spellcheck';
 import { CodesmellTypo } from './typo';
-import { findDifferences } from './utils';
+import { findDifferences, registerUserKey } from './utils';
 import * as _ from 'lodash';
 /**
  * Used to associate diagnostic entries with code actions.
@@ -112,6 +112,8 @@ export function subscribeDiagnosticsToDocumentChanges(
 
 
     let saveDisposable = vscode.workspace.onDidSaveTextDocument(async document => {
+      console.log('test');
+        registerUserKey();
         // Retrieve the document's URI as a string to use as a key
         let documentUri = document.uri.toString();
 
@@ -121,15 +123,16 @@ export function subscribeDiagnosticsToDocumentChanges(
         // Retrieve the last saved content from the map
         let previousContent = lastSavedContent.get(documentUri) || "";
 
+        // Update the last saved content in the map
+        lastSavedContent.set(documentUri, currentContent);
+
         // Get differences between the previous content and current content
         let differences = findDifferences(previousContent, currentContent);
+        console.log('differences', differences);
         if(!_.isEmpty(differences)) {
           await spellCheck(document, differences)
           refreshDiagnostics(document);
         }
-        
-        // Update the last saved content in the map
-        lastSavedContent.set(documentUri, currentContent);
     });
     
 
